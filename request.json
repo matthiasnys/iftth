@@ -1,0 +1,53 @@
+{
+    "resource": "/hello",
+    "path": "/hello",
+    "httpMethod": "POST",
+    "headers": {
+      "Accept": "*/*",
+      "cache-control": "no-cache",
+      "CloudFront-Forwarded-Proto": "https",
+      "CloudFront-Is-Desktop-Viewer": "true",
+      "CloudFront-Is-Mobile-Viewer": "false",
+      "CloudFront-Is-SmartTV-Viewer": "false",
+      "CloudFront-Is-Tablet-Viewer": "false",
+      "CloudFront-Viewer-Country": "NL",
+      "Content-Type": "application/json",
+      "Host": "2xw6pvni84.execute-api.us-east-1.amazonaws.com",
+      "Postman-Token": "7cf6eb01-e322-41c9-9a5a-e41c9d47999f",
+      "User-Agent": "PostmanRuntime/3.0.5",
+      "Via": "1.1 a87358124376a016816b92e640349672.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Id": "Mtmb62xZeJZnRASzabApJvKpqDEmXoMdN2Ho4-QTQHLj61V6eFGKSA==",
+      "X-Amzn-Trace-Id": "Root=1-58b1b7a5-57575bdc5bcbe00b5a105edc",
+      "X-Forwarded-For": "46.166.186.251, 216.137.56.16",
+      "X-Forwarded-Port": "443",
+      "X-Forwarded-Proto": "https"
+    },
+    "queryStringParameters": null,
+    "pathParameters": null,
+    "stageVariables": null,
+    "requestContext": {
+      "accountId": "573881996561",
+      "resourceId": "7b840e",
+      "stage": "dev",
+      "requestId": "9824b330-fb7b-11e6-b6dc-ad06ae7c014d",
+      "identity": {
+        "cognitoIdentityPoolId": null,
+        "accountId": null,
+        "cognitoIdentityId": null,
+        "caller": null,
+        "apiKey": null,
+        "sourceIp": "46.166.186.251",
+        "accessKey": null,
+        "cognitoAuthenticationType": null,
+        "cognitoAuthenticationProvider": null,
+        "userArn": null,
+        "userAgent": "PostmanRuntime/3.0.5",
+        "user": null
+      },
+      "resourcePath": "/hello",
+      "httpMethod": "POST",
+      "apiId": "2xw6pvni84"
+    },
+    "body": "{\n\t\"visitor\": {\n\t\t\"first_name\": \"Matthias\",\n\t\t\"last_name\": \"Nys\",\n\t\t\"company_id\": \"58ac07108fa239001e0a0b04\"\n\t},\n\t\"host\": {\n\t\t\"first_name\": \"Matthias\",\n\t\t\"last_name\": \"Nys\",\n\t\t\"email\": \"anthony@test.com\"\n\t}\n}",
+    "isBase64Encoded": false
+  }

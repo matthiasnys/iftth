@@ -1,0 +1,11 @@
+{
+  "harvest": {
+    "credentials": {
+      "username": "Your Email Address",
+      "password": "Your Password",
+      "subdomain": "Your subdomain",
+      "project_id": "project to start/stop",
+      "task_id": "task to start/stop"
+    }
+  }
+}

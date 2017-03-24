@@ -1,0 +1,5 @@
+/config/default.json
+/.serverless
+/.vscode
+/node_modules
+/deploy.sh
