@@ -164,20 +164,15 @@ function cutBillable (entry, callback) {
   var maxBillable = config.get('harvest.credentials.max_billable_hours')
   var unBillableTaskId = config.get('harvest.credentials.max_billable_hours')
   if (maxBillable < entry.hours) {
-    // There is a cut off needed.
-    console.log('Needs cut off!')
     var remains = entry.hours - maxBillable
     entry.hours = maxBillable
-    // entry.hours_without_timer = maxBillable
     updateEntry(entry, function (error, body) {
       if (error !== null) {
-        // Some Error!
         callback(error, null)
       } else {
         // Entry has been updated, add the remaining to unbillable.
-        startTimerAPICall(remains, config.get('harvest.credentials.unbillable_task_id'), function (error, body) {
+        startTimerAPICall(remains, unBillableTaskId, function (error, body) {
           if (error !== null) {
-            // Some Error!
             callback(error, null)
           } else {
             callback(null, body)
