@@ -21,7 +21,6 @@ module.exports.startTimer = (event, context, callback) => {
         }
       }
 
-      
       if (todayTimer !== null && todayTimer.id > 0) {
         // Found a running timer, stop it!
         toggleTimerAPICall(todayTimer.id, function (error, response) {
@@ -32,7 +31,7 @@ module.exports.startTimer = (event, context, callback) => {
           }
         })
       } else {
-        startTimerAPICall(function (error, response) {
+        startTimerAPICall(0, config.get('harvest.credentials.task_id'), function (error, response) {
           if (error !== null) {
             // Some Error!
             httpCallback('error', 500, callback)
@@ -46,7 +45,7 @@ module.exports.startTimer = (event, context, callback) => {
   })
 }
 
-function startTimerAPICall (callback) {
+function startTimerAPICall (hours, taskId, callback) {
   var options = { method: 'POST',
     url: 'https://' + config.get('harvest.credentials.subdomain') + '.harvestapp.com/daily/add',
     headers: { 'postman-token': 'f2f7f539-ab31-ed96-d613-38d7dc8f4d6f',
@@ -57,7 +56,8 @@ function startTimerAPICall (callback) {
     },
     body: { notes: 'Started Using IFTTH',
       project_id: config.get('harvest.credentials.project_id'),
-      task_id: config.get('harvest.credentials.task_id')
+      task_id: taskId,
+      hours: (hours > 0 ? hours : null)
     },
     json: true
   }
@@ -133,14 +133,24 @@ module.exports.stopRunningTimer = (event, context, callback) => {
         }
       }
 
-      
       if (runningTimer !== null && runningTimer.id > 0) {
         // Found a running timer, stop it!
         toggleTimerAPICall(runningTimer.id, function (error, response) {
           if (error !== null) {
             httpCallback('error', 500, callback)
           } else {
-            httpCallback(response, 200, callback)
+            if (config.get('harvest.credentials.cut_billable') === 1) {
+              // Cut billable.
+              cutBillable(response, function (error, reponse) {
+                if (error !== null) {
+                  httpCallback('error', 500, callback)
+                } else {
+                  httpCallback(response, 200, callback)
+                }
+              })
+            } else {
+              httpCallback(response, 200, callback) // No cutting needed.
+            }
           }
         })
       } else {
@@ -148,6 +158,29 @@ module.exports.stopRunningTimer = (event, context, callback) => {
       }
     }
   })
+}
+
+function cutBillable (entry, callback) {
+  var maxBillable = config.get('harvest.credentials.max_billable_hours')
+  var unBillableTaskId = config.get('harvest.credentials.max_billable_hours')
+  if (maxBillable < entry.hours) {
+    var remains = entry.hours - maxBillable
+    entry.hours = maxBillable
+    updateEntry(entry, function (error, body) {
+      if (error !== null) {
+        callback(error, null)
+      } else {
+        // Entry has been updated, add the remaining to unbillable.
+        startTimerAPICall(remains, unBillableTaskId, function (error, body) {
+          if (error !== null) {
+            callback(error, null)
+          } else {
+            callback(null, body)
+          }
+        })
+      }
+    })
+  }
 }
 
 function generateBasicAuth (username, password) {
@@ -162,4 +195,27 @@ function httpCallback (message, code, callback) {
     })
   }
   callback(null, response)
+}
+
+function updateEntry (entry, callback) {
+  var options = {
+    method: 'POST',
+    url: 'https://' + config.get('harvest.credentials.subdomain') + '.harvestapp.com/daily/update/' + entry.id,
+    headers: {
+      'cache-control': 'no-cache',
+      authorization: generateBasicAuth(config.get('harvest.credentials.username'), config.get('harvest.credentials.password')),
+      'content-type': 'application/json',
+      accept: 'application/json'
+    },
+    body: entry,
+    json: true
+  }
+
+  // Send your request to harvest
+  request(options, function (error, response, body) {
+    console.log('error:', error) // Print the error if one occurred
+    console.log('statusCode:', response && response.statusCode) // Print the response status code if a response was received
+    console.log('body:', body) // Print the HTML for the Google homepage.
+    callback(error, body)
+  })
 }

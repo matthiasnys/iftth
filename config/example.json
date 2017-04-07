@@ -5,7 +5,10 @@
       "password": "Your Password",
       "subdomain": "Your subdomain",
       "project_id": "project to start/stop",
-      "task_id": "task to start/stop"
+      "task_id": "task to start/stop",
+      "cut_billable": 0,
+      "max_billable_hours": 8,
+      "unbillable_task_id": "fill in your unbillable task id"
     }
   }
 }
