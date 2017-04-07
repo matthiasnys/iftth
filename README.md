@@ -9,4 +9,5 @@ A Serverless Node App that allows you to start/stop a certain timer on Harvest.c
 - Copy `config/example.json` to `config/default.json` and fill in your information
 - execute `deploy.sh`
 
-enjoy the ride
+## More information
+https://medium.com/@bnys/automagic-time-tracking-96087393d66a
