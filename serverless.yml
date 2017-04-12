@@ -13,4 +13,8 @@ functions:
   stopRunningTimer:
     handler: handler.stopRunningTimer
     events:
-      - http: POST stop      
+      - http: POST stop     
+  cutToday:
+    handler: handler.cutToday
+    events:
+      - http: POST cut

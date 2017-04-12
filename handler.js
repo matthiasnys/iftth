@@ -160,9 +160,43 @@ module.exports.stopRunningTimer = (event, context, callback) => {
   })
 }
 
+module.exports.cutToday = (event, context, callback) => {
+  // Cuts it in pieces.
+  dailyListAPICall(function (error, response) {
+    if (error !== null) {
+      // Some Error!
+      httpCallback('error', 500, callback)
+    } else {
+      // Find running timer (on project and task)
+      var dayEntries = response.day_entries
+      var billableEntry = null
+
+      for (var index = 0; index < dayEntries.length; ++index) {
+        var dayEntry = dayEntries[index]
+        if (dayEntry.hasOwnProperty('timer_started_at') === false && dayEntry.project_id === config.get('harvest.credentials.project_id') && dayEntry.task_id === config.get('harvest.credentials.task_id')) {
+          billableEntry = dayEntry
+        }
+      }
+
+      if (billableEntry !== null && billableEntry.id > 0) {
+        // Found a stopped timer, try to cut it
+        cutBillable(billableEntry, function (error, reponse) {
+          if (error !== null) {
+            httpCallback('error', 500, callback)
+          } else {
+            httpCallback(response, 200, callback)
+          }
+        })
+      } else {
+        httpCallback({'message': 'nothing stopped found', 'response': response }, 404, callback)
+      }
+    }
+  })
+}
+
 function cutBillable (entry, callback) {
   var maxBillable = config.get('harvest.credentials.max_billable_hours')
-  var unBillableTaskId = config.get('harvest.credentials.max_billable_hours')
+  var unBillableTaskId = config.get('harvest.credentials.unbillable_task_id')
   if (maxBillable < entry.hours) {
     var remains = entry.hours - maxBillable
     entry.hours = maxBillable
